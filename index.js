@@ -25,6 +25,29 @@ var disableSelect;
 window.onload = function (){
     //run startgame function when button is clicked
     id("start-btn").addEventListener("click", startGame);
+    //add event listener to each number in number container
+    for(let i = 0; i < id("number-container").children.length; i++){
+        id("number-container").children[i].addEventListener("click", function (){
+           //if selecting is not disabled
+           if(!disableSelect){
+               //if number is already selected
+               if(this.classList.contains("selected")){
+                   //then remove the selction
+                   this.classList.remove("selected");
+                   selectedNum = null;
+               } else {
+                   //deselect all other numbers
+                   for(let i = 0; i < 9; i++){
+                       id("number-container").children[i].classList.remove("selected");
+                   }
+                   //select it and update selectNum variable
+                   this.classList.add("selected");
+                   selectedNum = this;
+                   updateMove();
+               }
+           }
+        });
+    }
 }
 
 function startGame(){
@@ -89,6 +112,26 @@ function generateBoard(board){
             tile.textContent = board.charAt(i);
         }else{
             //add click event listener to tile
+            tile.addEventListener("click", function (){
+               //if selecting is not disabled
+               if(!disableSelect){
+                   //if the tile is already selected
+                    if(tile.classList.contains("selected")){
+                        //then remove the selection
+                        tile.classList.remove("selected");
+                        selectedTile = null;
+                    } else {
+                        //deselect all other tiles
+                        for(let i = 0; i < 81; i++){
+                            qsa(".tile")[i].classList.remove("selected");
+                        }
+                        //add selection and update variable
+                        tile.classList.add("selected");
+                        selectedTile = tile;
+                        updateMove();
+                    }
+                }
+            });
         }
         //assign tile id
         tile.id = idCount;
@@ -105,6 +148,22 @@ function generateBoard(board){
         //add tile to board
         id("board").appendChild(tile);
     }
+}
+
+function updateMove(){
+    //if a tile and a number is selected
+    if(selectedTile && selectedNum){
+        //set the tile tio the correct number
+        selectedTile.textContent = selectedNum.textContent;
+        //if the number matches the corresponding in the solution key
+        if(checkCorrect(selectedTile)){
+
+        }
+    }
+}
+
+function checkCorrect(tile){
+
 }
 
 function clearPrevious(){
