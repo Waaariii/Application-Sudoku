@@ -157,13 +157,77 @@ function updateMove(){
         selectedTile.textContent = selectedNum.textContent;
         //if the number matches the corresponding in the solution key
         if(checkCorrect(selectedTile)){
-
+            //deselects the tile
+            selectedTile.classList.remove("selected");
+            selectedNum.classList.remove("selected");
+            //clear the selected variables
+            selectedNum = null;
+            selectedTile = null;
+            //check if board is completed
+            if (checkDone()){
+                endGame();
+            }
+            //check if the numbers doesnot match the solution key
+        } else {
+            //disable selecting new numbers for one second
+            disableSelect = true;
+            //Make the tile turn red
+            selectedTile.classList.add("incorrect");
+            setTimeout(function (){
+                //substract lives by one
+                lives --;
+                //if no lives left end the game
+                if(lives === 0){
+                    endGame();
+                } else {
+                    //if lives is not equal to zero
+                    //update lives text
+                    id("vies").textContent = "Vies : " + lives;
+                    //Renable selecting numbers and tiles
+                    disableSelect = false;
+                }
+                // Restore tile color and remove selected from both
+                selectedTile.classList.remove("incorrect");
+                selectedTile.classList.remove("selected");
+                selectedNum.classList.remove("selected");
+                //Clear the tiles text and clear selected variables
+                selectedTile.textContent = "";
+                selectedTile = null;
+                selectedNum = null;
+            }, 1000);
         }
     }
 }
 
-function checkCorrect(tile){
+function checkDone(){
+    let tiles = qsa(".tile");
+    for (let i = 0; i < tiles.length; i++){
+        if(tiles[i].textContent === "") return false;
+    }
+    return true;
+}
 
+function endGame(){
+    //Disable moves and stop the timer
+    disableSelect = true;
+    clearTimeout(timer);
+    //display win or loss message
+    if (lives === 0 || timeRemaining === 0){
+        id("vies").textContent = "Perdu!"
+    } else {
+        id("vies").textContent = "Victoire !"
+    }
+}
+
+function checkCorrect(tile){
+    //set solution based on difficulty selection
+    let solution;
+    if(id("diff-1").checked) solution = easy [1];
+    else if(id("diff-2").checked) solution = medium[1];
+    else solution = hard[1];
+    //if tile's number is equal to solution's number
+    if(solution.charAt(tile.id) === tile.textContent) return true;
+    else return false;
 }
 
 function clearPrevious(){
