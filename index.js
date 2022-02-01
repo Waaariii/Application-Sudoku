@@ -36,14 +36,47 @@ function startGame(){
     //Set lives to 3 and enable selecting numbers and tiles
     lives = 3;
     disableSelect = false;
-    id("lives").textContent = "Vies : 3";
+    id("vies").textContent = "Vies : 3";
     //Created board based on difficulty
     generateBoard(board);
+    //Starts the timer
+    startTimer();
+    //Sets theme based on input
+    if(id("theme-1").checked){
+        qs("body").classList.remove("dark");
+    } else {
+        qs("body").classList.add("dark");
+    }
+    //show number container
+    id("number-container").classList.remove("hidden");
+}
+
+function startTimer(){
+    //sets time remaining on input
+    if(id("time-1").checked) timeRemaining = 180;
+    else if(id("time-2").checked) timeRemaining = 300;
+    else timeRemaining = 600;
+    //Sets timer on the first second
+    id("timer").textContent = timeConversion(timeRemaining);
+    //Sets timer update every second
+    timer = setInterval(function(){
+        timeRemaining --;
+        if (timeRemaining === 0) endGame();
+        id("timer").textContent = timeConversion(timeRemaining);
+    }, 1000)
+}
+//Converts second into string of mm:ss format
+function timeConversion(time){
+    let minutes = Math.floor(time/60);
+    if(minutes < 10) minutes = "0" + minutes;
+    let seconds = time % 60;
+    if (seconds < 10) seconds = "0" + seconds;
+    return minutes + ":" + seconds;
 }
 
 function generateBoard(board){
     //Clear previous board
-    cleanPrevious();
+    clearPrevious();
     //let used to increment tile ids
     let idCount= 0;
     //create 81 tiles
@@ -63,7 +96,7 @@ function generateBoard(board){
         idCount ++;
         //add tile class to all tile
         tile.classList.add("tile");
-        if ((tile.id > 17 && tile < 27) || (tile.id > 44 && tile.id < 54)){
+        if ((tile.id > 17 && tile.id < 27) || (tile.id > 44 && tile.id < 54)){
             tile.classList.add("bottomBorder");
         }
         if ((tile.id + 1) % 9 == 3 || (tile.id + 1) % 9 == 6){
